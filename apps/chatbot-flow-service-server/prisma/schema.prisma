@@ -1,0 +1,55 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Edge {
+  createdAt DateTime @default(now())
+  fromNode  String?
+  id        String   @id @default(cuid())
+  nodes     Node[]
+  toNode    String?
+  updatedAt DateTime @updatedAt
+}
+
+model Node {
+  content   Json?
+  createdAt DateTime @default(now())
+  edge      Edge?    @relation(fields: [edgeId], references: [id])
+  edgeId    String?
+  flow      Flow?    @relation(fields: [flowId], references: [id])
+  flowId    String?
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+}
+
+model Flow {
+  bot         Bot?     @relation(fields: [botId], references: [id])
+  botId       String?
+  createdAt   DateTime @default(now())
+  description String?
+  id          String   @id @default(cuid())
+  name        String?
+  nodes       Node[]
+  updatedAt   DateTime @updatedAt
+}
+
+model Bot {
+  createdAt DateTime @default(now())
+  flows     Flow[]
+  id        String   @id @default(cuid())
+  name      String?
+  updatedAt DateTime @updatedAt
+}
+
+model IntegrationService {
+  apiDetails  Json?
+  createdAt   DateTime @default(now())
+  id          String   @id @default(cuid())
+  serviceName String?
+  updatedAt   DateTime @updatedAt
+}
